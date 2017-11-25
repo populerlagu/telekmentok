@@ -1,0 +1,50 @@
+// ==UserScript==
+// @name         Histats OpenALL
+// @namespace    http://tampermonkey.net/
+// @version      1.0.1
+// @description  try to take over the world!
+// @author       Telek Mentok
+// @match        http://www.histats.com/viewstats/?sid=*&act=18
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict'; 
+
+    $('.Content td:first-child').first().prepend($('\
+<textarea id="doms" style="width:100%" rows=10>loyalmusik.tk\rasiamusic.tk</textarea>\
+<button class="getkw1" style="display:block;width:100%">GET POPULAR KW (MODE 1)</button>\
+<button class="getkw2" style="display:block;width:100%">GET POPULAR KW (MODE 2)</button>\
+<button class="sikat" style="display:block;width:100%;background:black;color:white">SEARCH ALL</button>\
+'));
+    $('#histats_stats_divmodMAIN_0').first().prepend($('<textarea id="kws" style="width:100%" rows=10></textarea>'));
+    $('.getkw1').click(function(){
+        var kws = document.getElementById('kws');
+        kws.value='';
+        var as = document.querySelectorAll('#div_cnt_SUM_visits a[id$="_t"]');
+        for(var i = 0; i < as.length; i++) {
+            var kw = as[i].pathname.split(/[\/\.]/).sort(function(a, b) { return b.length - a.length; }).shift().replace(/[-_\s]+/g,' ');
+            if(kw) kws.value = kws.value+decodeURIComponent(kw)+'\n';
+        }
+    });
+    $('.getkw2').click(function(){
+        var kws = document.getElementById('kws');
+        kws.value='';
+        var as = document.querySelectorAll('#div_cnt_SUM_visits a[id$="_t"]');
+        for(var i = 0; i < as.length; i++) {
+            var kw = $(as[i]).text().replace(/[-_]/g,' ');
+            if(kw) kws.value = kws.value+decodeURIComponent(kw)+'\n';
+        }
+    });
+    $('.sikat').click(function(){
+        var domains = document.getElementById('doms').value;
+        domains = domains.match(/[^\r\n]+/g);
+        var keywords = document.getElementById('kws').value;
+        keywords = keywords.match(/[^\r\n]+/g);
+        for(var i = 0, n = domains.length; i < n; i++) {
+            for(var j = 0, o = keywords.length; j < o; j++) {
+                window.open('http://'+domains[i]+'/?cari='+encodeURIComponent(keywords[j]).replace(/%20/g, '+'));
+            }
+        }
+    });
+})();
